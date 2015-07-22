@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Speakjava (simon.ritter@oracle.com)
@@ -22,13 +23,13 @@ public class Lesson1 {
 
     public Lesson1() {
         elementsPrinted = 0;
-        executor = Executors.newFixedThreadPool(2);
+        executor = Executors.newFixedThreadPool(1);
     }
 
     /**
      * Run the exercises to ensure we got the right answers
      */
-    public void runExercises() {
+    public void runExercises() throws InterruptedException {
         System.out.println("JDK 8 Lambdas and Streams MOOC Lesson 1");
         System.out.println("Running exercise 1 solution...");
         exercise1();
@@ -128,17 +129,19 @@ public class Lesson1 {
      *
      * Create a new thread that prints the numbers from the list.
      */
-    private void exercise5() {
+    private void exercise5() throws InterruptedException {
         List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         setNumbers(list);
         printNumbersWithExecutor();
         printNumbersWithThread();
     }
 
-    public Future<Integer> printNumbersWithExecutor() {
+    public Future<Integer> printNumbersWithExecutor() throws InterruptedException {
         Future<Integer> future = executor.submit(
                 () -> { numbers.forEach( s -> {System.out.print(s); elementsPrinted++;}); return elementsPrinted;}
         );
+        executor.shutdown();
+        executor.awaitTermination(1, TimeUnit.SECONDS);
         return future;
     }
 
@@ -151,7 +154,7 @@ public class Lesson1 {
      *
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Lesson1 lesson = new Lesson1();
         lesson.runExercises();
     }
