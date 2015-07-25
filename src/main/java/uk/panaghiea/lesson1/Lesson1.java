@@ -15,15 +15,11 @@ import java.util.concurrent.TimeUnit;
  * @author Speakjava (simon.ritter@oracle.com)
  */
 public class Lesson1 {
-    private List<String> words;
-    private Map<String, Integer> map;
     private Integer elementsPrinted;
-    private List<Integer> numbers;
     private ExecutorService executor;
 
     public Lesson1() {
         elementsPrinted = 0;
-        executor = Executors.newFixedThreadPool(1);
     }
 
     /**
@@ -58,12 +54,10 @@ public class Lesson1 {
     private void exercise1() {
         List<String> list = Arrays.asList(
                 "alpha", "bravo", "charlie", "delta", "echo", "foxtrot");
-        this.setWords(list);
-
-        System.out.println(getFirstLetters());
+        System.out.println(getFirstLetters(list));
     }
 
-    public String getFirstLetters() {
+    public String getFirstLetters(List<String> words) {
         final StringBuilder firstLetters = new StringBuilder();
         words.forEach(s -> firstLetters.append(s.charAt(0)));
         return firstLetters.toString();
@@ -77,11 +71,10 @@ public class Lesson1 {
     private void exercise2() {
         List<String> list = new ArrayList<>(Arrays.asList(
                 "alpha", "bravo", "charlie", "delta", "echo", "foxtrot"));
-        setWords(list);
-        System.out.println(removeOddLengthWords());
+        System.out.println(removeOddLengthWords(list));
     }
 
-    public List<String> removeOddLengthWords() {
+    public List<String> removeOddLengthWords(List<String> words) {
         words.removeIf(s -> (s.length() & 1) == 1);
         return words;
     }
@@ -94,11 +87,10 @@ public class Lesson1 {
     private void exercise3() {
         List<String> list = new ArrayList<>(Arrays.asList(
                 "alpha", "bravo", "charlie", "delta", "echo", "foxtrot"));
-        setWords(list);
-        System.out.println(replaceWordsWithUpperCase());
+        System.out.println(replaceWordsWithUpperCase(list));
     }
 
-    public List<String> replaceWordsWithUpperCase() {
+    public List<String> replaceWordsWithUpperCase(List<String> words) {
         words.replaceAll(String::toUpperCase);
         return words;
     }
@@ -114,11 +106,10 @@ public class Lesson1 {
         map.put("c", 3);
         map.put("b", 2);
         map.put("a", 1);
-        setMap(map);
-        System.out.println(convertMapToString());
+        System.out.println(convertMapToString(map));
     }
 
-    public String convertMapToString() {
+    public String convertMapToString(Map<String, Integer> map) {
         StringBuilder convertedMap = new StringBuilder();
         map.forEach((k, v) -> convertedMap.append(k).append(v));
         return convertedMap.toString();
@@ -131,12 +122,11 @@ public class Lesson1 {
      */
     private void exercise5() throws InterruptedException {
         List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-        setNumbers(list);
-        printNumbersWithExecutor();
-        printNumbersWithThread();
+        printNumbersWithExecutor(list);
+        printNumbersWithThread(list);
     }
 
-    public Future<Integer> printNumbersWithExecutor() throws InterruptedException {
+    public Future<Integer> printNumbersWithExecutor(List<Integer> numbers) throws InterruptedException {
         Future<Integer> future = executor.submit(
                 () -> { numbers.forEach( s -> {System.out.print(s); elementsPrinted++;}); return elementsPrinted;}
         );
@@ -145,7 +135,7 @@ public class Lesson1 {
         return future;
     }
 
-    public void printNumbersWithThread() {
+    public void printNumbersWithThread(List<Integer> numbers) {
         new Thread(()-> {numbers.forEach(System.out::print);}).start();
     }
 
@@ -156,21 +146,9 @@ public class Lesson1 {
      */
     public static void main(String[] args) throws InterruptedException {
         Lesson1 lesson = new Lesson1();
+        lesson.setExecutor(Executors.newFixedThreadPool(1));
         lesson.runExercises();
     }
-
-    public void setWords(List<String> words) {
-        this.words = words;
-    }
-
-    public void setMap(Map<String, Integer> properties) {
-        this.map = properties;
-    }
-
-    public void setNumbers(List<Integer> numbers) {
-        this.numbers = numbers;
-    }
-
     public void setExecutor(ExecutorService executor) {
         this.executor = executor;
     }
